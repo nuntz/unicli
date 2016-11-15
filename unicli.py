@@ -19,7 +19,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
               default='127.0.0.1',
               help='The hostname of the Unifi controller.')
 @click.option('--port', prompt='Port',
-              default='8443',
+              default=8443,
               help='The port of the Unifi controller.')
 @click.option('--verify/--no-verify', prompt='Verify SSL',
               default=True,
@@ -33,16 +33,17 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
               help='The password used to authenticate.')
 @click.pass_context
 def cli(ctx, host, port, verify, site, user, password):
+    ctx.obj = {}
     ctx.obj['HOST'] = host
-    ctx.obj['PORT'] = port
-    ctx.obj['URL'] = 'https://' + host + ':' + port + '/api/s/' + site + '/'
+    ctx.obj['PORT'] = str(port)
+    ctx.obj['URL'] = 'https://' + host + ':' + str(port) + '/api/s/' + site + '/'
     ctx.obj['VERIFY'] = verify
     ctx.obj['USER'] = user
     ctx.obj['PASSWORD'] = password
 
     payload = {'username': ctx.obj['USER'], 'password': ctx.obj['PASSWORD']}
     click.echo('Logging in...')
-    r = requests.post('https://' + host + ':' + port + '/api/login',
+    r = requests.post('https://' + host + ':' + str(port) + '/api/login',
                      data=json.dumps(payload),
                      verify=ctx.obj['VERIFY'])
     ctx.obj['COOKIES'] = r.cookies
@@ -60,8 +61,7 @@ def list(ctx):
 
 
 @cli.command()
-@click.option('--mac', prompt='MAC address',
-              help='The MAC address of the client.')
+@click.argument('mac')
 @click.pass_context
 def unblock(ctx, mac):
     """Unblock a client using its MAC address."""
@@ -73,8 +73,7 @@ def unblock(ctx, mac):
 
 
 @cli.command()
-@click.option('--mac', prompt='MAC address',
-              help='The MAC address of the client.')
+@click.argument('mac')
 @click.pass_context
 def block(ctx, mac):
     """Block a client using its MAC address."""
