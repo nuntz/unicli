@@ -15,19 +15,19 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 @click.group()
-@click.option('--host', prompt='Host',
+@click.option('--host',
               default='127.0.0.1',
               help='The hostname of the Unifi controller.')
-@click.option('--port', prompt='Port',
+@click.option('--port',
               default=8443,
               help='The port of the Unifi controller.')
-@click.option('--verify/--no-verify', prompt='Verify SSL',
+@click.option('--verify/--no-verify',
               default=True,
               help='Verify SSL certificate.')
-@click.option('--site', prompt='Site ID',
+@click.option('--site',
               default='default',
               help='The site ID used by the Unifi controller.')
-@click.option('--user', prompt='User', default='ubnt',
+@click.option('--user', default='ubnt',
               help='The user account used to authenticate.')
 @click.option('--password', prompt='Password', hide_input=True,
               help='The password used to authenticate.')
@@ -52,8 +52,8 @@ def cli(ctx, host, port, verify, site, user, password):
 @cli.command()
 @click.pass_context
 def list(ctx):
-    """List clients."""
-    click.echo('Listing the clients...')
+    """List active clients."""
+    click.echo('Listing the active clients...')
     r = requests.get(ctx.obj['URL'] + 'stat/sta', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'])
     for mac in [value['mac'] for value in json.loads(r.text)['data']]:
