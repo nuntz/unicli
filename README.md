@@ -33,6 +33,6 @@ $ unicli --host mycontroller --port 8443 --no-verify --user ubnt --site default 
 Block a client:
 
 ```shell
-$ unicli --host mycontroller --port 8443 --no-verify --user ubnt --site default --mac 01:23:45:67:89:ab block
+$ unicli --host mycontroller --port 8443 --no-verify --user ubnt --site default block 01:23:45:67:89:ab
 ```
 
