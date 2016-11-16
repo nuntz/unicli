@@ -36,9 +36,10 @@ Block a client:
 $ unicli --host mycontroller --port 8443 --no-verify --user ubnt --site default block 01:23:45:67:89:ab
 ```
 
-Note: the password can also be passed as an environment variable:
+Hint: the password can also be accepted from an environment variable. To prevent the password from being stored in your history file, set the `HISTCONTROL` environment variable to *ignorespace* and prefix the export statement a blank space when setting the password:
 
 ```shell
-$ export PASSWORD=foo
+$ export HISTCONTROL=ignorespace
+$  export PASSWORD=foo
 ```
 
