@@ -30,7 +30,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 @click.option('--user', default='ubnt',
               help='The user account used to authenticate.')
 @click.option('--password', prompt='Password', hide_input=True,
-              help='The password used to authenticate.')
+              envvar='PASSWORD', help='The password used to authenticate.')
 @click.pass_context
 def cli(ctx, host, port, verify, site, user, password):
     ctx.obj = {}
