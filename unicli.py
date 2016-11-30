@@ -64,7 +64,23 @@ def events(ctx):
 
 @cli.command()
 @click.pass_context
-def list(ctx):
+def devices(ctx):
+    """List devices (AP)."""
+    click.echo('Getting devices data...')
+    r = requests.get(ctx.obj['URL'] + 'stat/device', verify=ctx.obj['VERIFY'],
+                     cookies=ctx.obj['COOKIES'])
+
+    for (name, adopt_ip, num_sta, guest_num_sta) in [(value['name'],
+          value['adopt_ip'], value['num_sta'], value['guest-num_sta'])
+          for value in json.loads(r.text)['data']]:
+
+        click.echo('{0} {1} ({2} users, {3} guests)'.format(name,
+                                  adopt_ip, num_sta, guest_num_sta))
+
+
+@cli.command()
+@click.pass_context
+def clients(ctx):
     """List active clients."""
     click.echo('Listing the active clients...')
     r = requests.get(ctx.obj['URL'] + 'stat/sta', verify=ctx.obj['VERIFY'],
