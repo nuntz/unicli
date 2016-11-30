@@ -51,6 +51,19 @@ def cli(ctx, host, port, verify, site, user, password):
 
 @cli.command()
 @click.pass_context
+def events(ctx):
+    """Display recent events."""
+    click.echo('Downloading recent events...')
+    r = requests.get(ctx.obj['URL'] + 'stat/event', verify=ctx.obj['VERIFY'],
+                     cookies=ctx.obj['COOKIES'])
+
+    for (datetime, msg) in [(value['datetime'], value['msg']) for value in
+                            json.loads(r.text)['data']]:
+        click.echo('{0}\t{1}'.format(datetime, msg))
+
+
+@cli.command()
+@click.pass_context
 def list(ctx):
     """List active clients."""
     click.echo('Listing the active clients...')
@@ -58,12 +71,13 @@ def list(ctx):
                      cookies=ctx.obj['COOKIES'])
 
     def get_hostname(value):
-      if 'hostname' in value:
-        return value['hostname']
-      else:
-        return 'No hostname'
-    
-    for (mac, hostname) in [(value['mac'], get_hostname(value)) for value in json.loads(r.text)['data']]:
+        if 'hostname' in value:
+            return value['hostname']
+        else:
+            return 'No hostname'
+
+    for (mac, hostname) in [(value['mac'], get_hostname(value)) for value in
+                            json.loads(r.text)['data']]:
         click.echo('{0}\t{1}'.format(mac, hostname))
 
 
