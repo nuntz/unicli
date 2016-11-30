@@ -56,8 +56,15 @@ def list(ctx):
     click.echo('Listing the active clients...')
     r = requests.get(ctx.obj['URL'] + 'stat/sta', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'])
-    for mac in [value['mac'] for value in json.loads(r.text)['data']]:
-        click.echo(mac)
+
+    def get_hostname(value):
+      if 'hostname' in value:
+        return value['hostname']
+      else:
+        return 'No hostname'
+    
+    for (mac, hostname) in [(value['mac'], get_hostname(value)) for value in json.loads(r.text)['data']]:
+        click.echo('{0}\t{1}'.format(mac, hostname))
 
 
 @cli.command()
