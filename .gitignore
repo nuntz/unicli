@@ -2,3 +2,4 @@
 unicli.egg-info
 *.pyc
 *.swo
+*.swn
