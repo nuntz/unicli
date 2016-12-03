@@ -136,3 +136,16 @@ def block(ctx, mac):
     r = requests.post(ctx.obj['URL'] + 'cmd/stamgr', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'], data=json.dumps(payload))
     click.echo(r.text)
+
+
+@cli.command()
+@click.argument('mac')
+@click.pass_context
+def reconnect(ctx, mac):
+    """Reconnect a client using its MAC address."""
+    if ctx.obj['VERBOSE']:
+        click.echo('Reconnecting %s...' % mac)
+    payload = {'cmd': 'kick-sta', 'mac': mac}
+    r = requests.post(ctx.obj['URL'] + 'cmd/stamgr', verify=ctx.obj['VERIFY'],
+                     cookies=ctx.obj['COOKIES'], data=json.dumps(payload))
+    click.echo(r.text)
