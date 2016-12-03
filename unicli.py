@@ -31,7 +31,6 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
               help='The user account used to authenticate.')
 @click.option('--password', prompt='Password', hide_input=True,
               envvar='PASSWORD', help='The password used to authenticate.')
-@click.option('-v', '--verbose', count=True)
 @click.option('-v', '--verbose', is_flag=True,
               help='Enables verbose mode.')
 @click.pass_context
