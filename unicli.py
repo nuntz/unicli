@@ -100,9 +100,17 @@ def clients(ctx):
         else:
             return 'No hostname'
 
-    for (mac, hostname) in [(value['mac'], get_hostname(value)) for value in
+    for (mac, hostname, oui,channel, signal) in [(value['mac'],
+                                     get_hostname(value),
+                                     value['oui'],
+                                     value['channel'],
+                                     value['signal']) for value in
                             json.loads(r.text)['data']]:
-        click.echo('{0}\t{1}'.format(mac, hostname))
+        click.echo('{0} {1} (oui: {2}, channel: {3}, signal: {4}dBm)'.format(mac,
+                                                    hostname,
+                                                    oui,
+                                                    channel,
+                                                    signal))
 
 
 @cli.command()
