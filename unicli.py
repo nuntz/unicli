@@ -99,7 +99,7 @@ def clients(ctx):
         else:
             return 'No hostname'
 
-    for (mac, hostname, oui,channel, signal) in [(value['mac'],
+    for (mac, hostname, oui, channel, signal) in [(value['mac'],
                                      get_hostname(value),
                                      value['oui'],
                                      value['channel'],
