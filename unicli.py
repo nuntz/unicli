@@ -82,7 +82,8 @@ def devices(ctx):
 @click.pass_context
 def clients(ctx):
     """List active clients."""
-    click.echo('Listing the active clients...')
+    if ctx.obj['VERBOSE']:
+        click.echo('Listing the active clients...')
     r = requests.get(ctx.obj['URL'] + 'stat/sta', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'])
 
@@ -102,7 +103,8 @@ def clients(ctx):
 @click.pass_context
 def unblock(ctx, mac):
     """Unblock a client using its MAC address."""
-    click.echo('Unblocking %s...' % mac)
+    if ctx.obj['VERBOSE']:
+        click.echo('Unblocking %s...' % mac)
     payload = {'cmd': 'unblock-sta', 'mac': mac}
     r = requests.post(ctx.obj['URL'] + 'cmd/stamgr', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'], data=json.dumps(payload))
@@ -114,7 +116,8 @@ def unblock(ctx, mac):
 @click.pass_context
 def block(ctx, mac):
     """Block a client using its MAC address."""
-    click.echo('Blocking %s...' % mac)
+    if ctx.obj['VERBOSE']:
+        click.echo('Blocking %s...' % mac)
     payload = {'cmd': 'block-sta', 'mac': mac}
     r = requests.post(ctx.obj['URL'] + 'cmd/stamgr', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'], data=json.dumps(payload))
