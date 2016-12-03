@@ -61,10 +61,25 @@ def events(ctx):
         click.echo('Downloading recent events...')
     r = requests.get(ctx.obj['URL'] + 'stat/event', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'])
+    event_response = json.loads(r.text)
 
     for (datetime, msg) in [(value['datetime'], value['msg']) for value in
-                            json.loads(r.text)['data']]:
+                            event_response['data']]:
         click.echo('{0}\t{1}'.format(datetime, msg))
+
+
+def get_device_response(ctx):
+    """Return the deserialized JSON response for /stat/device (devices)"""
+    r = requests.get(ctx.obj['URL'] + 'stat/device', verify=ctx.obj['VERIFY'],
+                     cookies=ctx.obj['COOKIES'])
+    return json.loads(r.text)
+
+
+def get_device_hostnames(device_response):
+    """Return a dictionary that maps device mac addresses to hostnames."""
+    return dict(zip([value['mac'] for value in device_response['data']],
+                    [value['hostname'] for value in
+                     device_response['data']]))
 
 
 @cli.command()
@@ -73,12 +88,11 @@ def devices(ctx):
     """List devices (AP)."""
     if ctx.obj['VERBOSE']:
         click.echo('Getting devices data...')
-    r = requests.get(ctx.obj['URL'] + 'stat/device', verify=ctx.obj['VERIFY'],
-                     cookies=ctx.obj['COOKIES'])
+    device_response = get_device_response(ctx)
 
     for (name, adopt_ip, num_sta, guest_num_sta) in [(value['name'],
           value['adopt_ip'], value['num_sta'], value['guest-num_sta'])
-          for value in json.loads(r.text)['data']]:
+          for value in device_response['data']]:
 
         click.echo('{0} {1} ({2} users, {3} guests)'.format(name,
                                   adopt_ip, num_sta, guest_num_sta))
@@ -90,24 +104,31 @@ def clients(ctx):
     """List active clients."""
     if ctx.obj['VERBOSE']:
         click.echo('Listing the active clients...')
+    device_response = get_device_response(ctx)
+    device_hostnames = get_device_hostnames(device_response)
     r = requests.get(ctx.obj['URL'] + 'stat/sta', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'])
+    sta_response = json.loads(r.text)
 
-    def get_hostname(value):
+    def get_client_hostname(value):
         if 'hostname' in value:
             return value['hostname']
+        elif 'name' in value:
+            return value['name']
         else:
             return 'No hostname'
 
-    for (mac, hostname, oui, channel, signal) in [(value['mac'],
-                                     get_hostname(value),
+    for (mac, hostname, oui, ap, channel, signal) in [(value['mac'],
+                                     get_client_hostname(value),
                                      value['oui'],
+                                     device_hostnames[value['ap_mac']],
                                      value['channel'],
                                      value['signal']) for value in
-                            json.loads(r.text)['data']]:
-        click.echo('{0} {1} (oui: {2}, channel: {3}, signal: {4}dBm)'.format(mac,
+                            sta_response['data']]:
+        click.echo('{1} ({0} {2}) AP: {3}, CH: {4}, SG: {5}dBm'.format(mac,
                                                     hostname,
                                                     oui,
+                                                    ap,
                                                     channel,
                                                     signal))
 
