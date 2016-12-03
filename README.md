@@ -22,6 +22,17 @@ $ unicli --help
 
 
 
+## Supported Commands
+
+Currently supported commands:
+
+* `block`: block a client using its MAC address.
+* `clients`: list active clients.
+* `devices`: list devices (AP).
+* `events`: display recent events.
+* `reconnect`: reconnect a client using its MAC address.
+* `unblock`: unblock a client using its MAC address.
+
 ## Examples
 
 List all the clients:
