@@ -31,8 +31,11 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
               help='The user account used to authenticate.')
 @click.option('--password', prompt='Password', hide_input=True,
               envvar='PASSWORD', help='The password used to authenticate.')
+@click.option('-v', '--verbose', count=True)
+@click.option('-v', '--verbose', is_flag=True,
+              help='Enables verbose mode.')
 @click.pass_context
-def cli(ctx, host, port, verify, site, user, password):
+def cli(ctx, host, port, verify, site, user, password, verbose):
     ctx.obj = {}
     ctx.obj['HOST'] = host
     ctx.obj['PORT'] = str(port)
@@ -40,9 +43,11 @@ def cli(ctx, host, port, verify, site, user, password):
     ctx.obj['VERIFY'] = verify
     ctx.obj['USER'] = user
     ctx.obj['PASSWORD'] = password
+    ctx.obj['VERBOSE'] = verbose
 
     payload = {'username': ctx.obj['USER'], 'password': ctx.obj['PASSWORD']}
-    click.echo('Logging in...')
+    if ctx.obj['VERBOSE']:
+        click.echo('Logging in...')
     r = requests.post('https://' + host + ':' + str(port) + '/api/login',
                      data=json.dumps(payload),
                      verify=ctx.obj['VERIFY'])
@@ -53,7 +58,8 @@ def cli(ctx, host, port, verify, site, user, password):
 @click.pass_context
 def events(ctx):
     """Display recent events."""
-    click.echo('Downloading recent events...')
+    if ctx.obj['VERBOSE']:
+        click.echo('Downloading recent events...')
     r = requests.get(ctx.obj['URL'] + 'stat/event', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'])
 
@@ -66,7 +72,8 @@ def events(ctx):
 @click.pass_context
 def devices(ctx):
     """List devices (AP)."""
-    click.echo('Getting devices data...')
+    if ctx.obj['VERBOSE']:
+        click.echo('Getting devices data...')
     r = requests.get(ctx.obj['URL'] + 'stat/device', verify=ctx.obj['VERIFY'],
                      cookies=ctx.obj['COOKIES'])
 
