@@ -119,19 +119,28 @@ def clients(ctx):
         else:
             return 'No hostname'
 
-    for (mac, hostname, oui, ap, channel, signal) in [(value['mac'],
+    def is_guest(value):
+        if value['is_guest']:
+            return 'guest'
+        else:
+            return ''
+
+    for (mac, hostname, oui, ap, channel, signal, is_guest) in [
+                                    (value['mac'],
                                      get_client_hostname(value),
                                      value['oui'],
                                      device_hostnames[value['ap_mac']],
                                      value['channel'],
-                                     value['signal']) for value in
-                            sta_response['data']]:
-        click.echo('{1} ({0} {2}) AP: {3}, CH: {4}, SG: {5}dBm'.format(mac,
+                                     value['signal'],
+                                     is_guest(value)) for value in
+                                    sta_response['data']]:
+        click.echo('{1} ({0} {2}) AP: {3}, CH: {4}, SG: {5}dBm {6}'.format(mac,
                                                     hostname,
                                                     oui,
                                                     ap,
                                                     channel,
-                                                    signal))
+                                                    signal,
+                                                    is_guest))
 
 
 @cli.command()
