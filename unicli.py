@@ -59,8 +59,9 @@ def events(ctx):
     """Display recent events."""
     if ctx.obj['VERBOSE']:
         click.echo('Downloading recent events...')
+    payload = {'_limit': 200, '_start': 0, 'within': 1}
     r = requests.get(ctx.obj['URL'] + 'stat/event', verify=ctx.obj['VERIFY'],
-                     cookies=ctx.obj['COOKIES'])
+                     cookies=ctx.obj['COOKIES'], data=json.dumps(payload))
     event_response = json.loads(r.text)
 
     for (datetime, msg) in [(value['datetime'], value['msg']) for value in
