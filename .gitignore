@@ -3,3 +3,4 @@ unicli.egg-info
 *.pyc
 *.swo
 *.swn
+.mypy_cache/*
