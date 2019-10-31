@@ -4,3 +4,4 @@ unicli.egg-info
 *.swo
 *.swn
 .mypy_cache/*
+.vscode/settings.json
